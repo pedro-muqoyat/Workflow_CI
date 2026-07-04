@@ -3,7 +3,7 @@ name: MLOps CI/CD Pipeline
 on:
   push:
     branches:
-      - main # (Ubah jadi master jika branch Anda master)
+      - main # (Ubah menjadi master jika default branch repositori adalah master)
 
 jobs:
   build-and-deploy:
@@ -27,6 +27,8 @@ jobs:
       - name: 4. Mengeksekusi Pelatihan Model (MLflow Project)
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+          MLFLOW_TRACKING_USERNAME: "pedro-muqoyat"
+          MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
         run: |
           mlflow run . --env-manager=local
 
