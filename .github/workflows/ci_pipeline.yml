@@ -18,17 +18,20 @@ jobs:
         with:
           python-version: "3.12"
 
+      # Pematokan versi setuptools<70.0.0 untuk kompatibilitas pkg_resources pada MLflow 2.11.3
       - name: 3. Instalasi Pustaka Pendukung & MLflow
         run: |
           python -m pip install --upgrade pip
           pip install "setuptools<70.0.0" wheel
           pip install pandas scikit-learn matplotlib seaborn mlflow==2.11.3
 
+      # [KOREKSI DETERMINISTIK] Penambahan MLFLOW_TRACKING_URI agar Parent Run langsung tercipta di DagsHub
       - name: 4. Mengeksekusi Pelatihan Model (MLflow Project)
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
           MLFLOW_TRACKING_USERNAME: "pedro-muqoyat"
           MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
+          MLFLOW_TRACKING_URI: "https://dagshub.com/pedro-muqoyat/Eksperimen_SML_lifani.mlflow"
         run: |
           mlflow run . --env-manager=local
 
