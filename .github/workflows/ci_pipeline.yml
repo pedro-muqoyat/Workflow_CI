@@ -42,11 +42,12 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # [SOLUSI PAMUNGKAS] Bypassing pyenv bug MLflow dengan Custom Dockerfile Pipeline Standar Industri
       - name: 6. Kompilasi & Distribusi Docker Image (Advanced Kriteria)
         run: |
           echo "[INFO] Menambahkan pengaman dependensi ke requirements.txt model..."
           if [ -f "local_model_dir/requirements.txt" ]; then
+            # [KOREKSI DI SINI] Menambahkan baris kosong (enter) agar teks tidak saling menempel
+            echo "" >> local_model_dir/requirements.txt
             echo "setuptools<70.0.0" >> local_model_dir/requirements.txt
           fi
 
@@ -66,6 +67,4 @@ jobs:
 
           echo "[INFO] Memulai eksekusi kompilasi Docker (Build)..."
           docker build -t ${{ secrets.DOCKER_USERNAME }}/klasifikasi-mahasiswa-api:latest .
-
-          echo "[INFO] Mengunggah Image ke Docker Hub Registry (Push)..."
           docker push ${{ secrets.DOCKER_USERNAME }}/klasifikasi-mahasiswa-api:latest
