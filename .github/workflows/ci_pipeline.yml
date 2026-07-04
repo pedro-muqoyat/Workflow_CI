@@ -1,0 +1,41 @@
+name: MLOps CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. Mengunduh Kode Repositori
+        uses: actions/checkout@v3
+
+      - name: 2. Konfigurasi Python Lingkungan
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: 3. Instalasi MLflow Engine
+        run: |
+          pip install mlflow==2.11.3
+
+      - name: 4. Mengeksekusi Pelatihan Model (MLflow Project)
+        env:
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+        run: |
+          mlflow run . --no-conda
+
+      - name: 5. Autentikasi ke Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: 6. Kompilasi & Distribusi Docker Image (Advanced Kriteria)
+        run: |
+          # Perintah bawaan MLflow untuk mengonversi model menjadi REST API Image
+          mlflow models build-docker -m local_model_dir -n ${{ secrets.DOCKERHUB_USERNAME }}/klasifikasi-mahasiswa-api:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/klasifikasi-mahasiswa-api:latest
