@@ -25,7 +25,7 @@ jobs:
           pip install "setuptools<70.0.0" wheel
           pip install pandas scikit-learn matplotlib seaborn mlflow==2.11.3
 
-      # [KOREKSI DETERMINISTIK] Penambahan MLFLOW_TRACKING_URI agar Parent Run langsung tercipta di DagsHub
+      # Penyuntikan MLFLOW_TRACKING_URI & kredensial DagsHub untuk mencegah galat Run not found
       - name: 4. Mengeksekusi Pelatihan Model (MLflow Project)
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
@@ -35,8 +35,9 @@ jobs:
         run: |
           mlflow run . --env-manager=local
 
+      # [KOREKSI DETERMINISTIK] Peningkatan ke v3 untuk kompatibilitas Node 24 & Resolusi Kredensial
       - name: 5. Autentikasi ke Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
