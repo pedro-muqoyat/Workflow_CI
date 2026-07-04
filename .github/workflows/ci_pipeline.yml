@@ -18,9 +18,11 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: 3. Instalasi MLflow Engine
+      # [KOREKSI DI SINI] Menambahkan setuptools dan pustaka model
+      - name: 3. Instalasi Pustaka Pendukung & MLflow
         run: |
-          pip install mlflow==2.11.3
+          pip install setuptools wheel
+          pip install pandas scikit-learn matplotlib seaborn mlflow==2.11.3
 
       - name: 4. Mengeksekusi Pelatihan Model (MLflow Project)
         env:
