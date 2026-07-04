@@ -28,7 +28,7 @@ jobs:
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
         run: |
-          mlflow run . --no-conda
+          mlflow run . --env-manager=local
 
       - name: 5. Autentikasi ke Docker Hub
         uses: docker/login-action@v2
