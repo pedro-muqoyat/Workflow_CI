@@ -18,10 +18,10 @@ jobs:
         with:
           python-version: "3.12"
 
-      # [KOREKSI DI SINI] Menambahkan setuptools dan pustaka model
       - name: 3. Instalasi Pustaka Pendukung & MLflow
         run: |
-          pip install setuptools wheel
+          python -m pip install --upgrade pip
+          pip install "setuptools<70.0.0" wheel
           pip install pandas scikit-learn matplotlib seaborn mlflow==2.11.3
 
       - name: 4. Mengeksekusi Pelatihan Model (MLflow Project)
