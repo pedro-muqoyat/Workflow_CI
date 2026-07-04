@@ -42,11 +42,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # [KOREKSI DETERMINISTIK] Penyuntikan setuptools<70 ke artefak model & penggunaan --env-manager=local
+      # [KOREKSI DETERMINISTIK] Menghapus --env-manager=local agar MLflow membangun virtualenv di dalam Docker
       - name: 6. Kompilasi & Distribusi Docker Image (Advanced Kriteria)
         run: |
           if [ -f "local_model_dir/requirements.txt" ]; then
             echo "setuptools<70.0.0" >> local_model_dir/requirements.txt
           fi
-          mlflow models build-docker -m local_model_dir -n ${{ secrets.DOCKER_USERNAME }}/klasifikasi-mahasiswa-api:latest --env-manager=local
+          mlflow models build-docker -m local_model_dir -n ${{ secrets.DOCKER_USERNAME }}/klasifikasi-mahasiswa-api:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/klasifikasi-mahasiswa-api:latest
