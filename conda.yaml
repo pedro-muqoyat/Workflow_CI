@@ -1,0 +1,12 @@
+name: klasifikasi-mahasiswa-env
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12.7
+  - pandas
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - pip
+  - pip:
+      - mlflow
