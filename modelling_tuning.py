@@ -9,9 +9,7 @@ from sklearn.metrics import accuracy_score, f1_score, confusion_matrix, classifi
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# ==========================================
-# KONFIGURASI DAGSHUB (Memenuhi Syarat Advanced)
-# ==========================================
+# KONFIGURASI DAGSHUB
 DAGSHUB_USERNAME = "pedro-muqoyat"
 DAGSHUB_REPO = "Eksperimen_SML_lifani"
 
@@ -42,9 +40,7 @@ def train_and_log_model():
         X, y, test_size=0.2, random_state=42, stratify=y
     )
     
-    # ==========================================
-    # HYPERPARAMETER TUNING (Memenuhi Syarat Skilled)
-    # ==========================================
+    # HYPERPARAMETER TUNING
     base_model = RandomForestClassifier(random_state=42)
     param_space = {
         'n_estimators': [50, 100],
@@ -59,17 +55,13 @@ def train_and_log_model():
         best_model = grid_search.best_estimator_
         predictions = best_model.predict(X_test_scaled)
         
-        # ==========================================
-        # MANUAL LOGGING (Memenuhi Syarat Skilled)
-        # ==========================================
+        # MANUAL LOGGING
         mlflow.log_params(grid_search.best_params_)
         mlflow.log_metric("akurasi_pengujian", accuracy_score(y_test, predictions))
         mlflow.log_metric("f1_score_bobot", f1_score(y_test, predictions, average='weighted'))
         mlflow.sklearn.log_model(best_model, "model_klasifikasi_mahasiswa")
         
-        # ==========================================
         # ARTEFAK TAMBAHAN (Memenuhi Syarat Advanced Minimal 2 Artefak)
-        # ==========================================
         print("[INFO] Memproduksi dan mengirim artefak tambahan...")
         
         # Artefak 1: Gambar Confusion Matrix
