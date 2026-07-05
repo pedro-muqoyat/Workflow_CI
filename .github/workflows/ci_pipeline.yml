@@ -44,15 +44,28 @@ jobs:
 
       - name: 6. Kompilasi & Distribusi Docker Image (Advanced Kriteria)
         run: |
-          echo "[INFO] Menambahkan baris kosong dan pengaman dependensi..."
-          if [ -f "local_model_dir/requirements.txt" ]; then
-            # Trik cerdas Anda agar teks tidak menempel:
-            echo "" >> local_model_dir/requirements.txt
-            echo "setuptools<70.0.0" >> local_model_dir/requirements.txt
-          fi
-          
-          echo "[INFO] Memulai eksekusi build menggunakan fungsi resmi MLflow..."
-          mlflow models build-docker -m local_model_dir -n ${{ secrets.DOCKER_USERNAME }}/klasifikasi-mahasiswa-api:latest --env-manager=local
-          
-          echo "[INFO] Mengunggah Image ke Docker Hub Registry..."
+          echo "[INFO] Merancang Dockerfile MLOps terisolasi berbasis Python 3.12-Slim..."
+          cat <<EOF > Dockerfile
+          FROM python:3.12-slim
+          WORKDIR /opt/mlflow
+          COPY local_model_dir ./model
+
+          # Install build-essential untuk kompilasi C-extensions
+          RUN apt-get update && apt-get install -y --no-install-recommends build-essential
+
+          # Install dependensi dasar MLflow dan pengaman setuptools terlebih dahulu
+          RUN pip install --no-cache-dir --upgrade pip && \
+              pip install --no-cache-dir "setuptools<70.0.0" wheel mlflow==2.11.3
+              
+          # Install dependensi model dari requirements.txt
+          RUN pip install --no-cache-dir -r ./model/requirements.txt
+
+          EXPOSE 5001
+          CMD ["mlflow", "models", "serve", "-m", "./model", "-h", "0.0.0.0", "-p", "5001", "--env-manager=local"]
+          EOF
+
+          echo "[INFO] Memulai eksekusi kompilasi Docker (Build)..."
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/klasifikasi-mahasiswa-api:latest .
+
+          echo "[INFO] Mengunggah Image ke Docker Hub Registry (Push)..."
           docker push ${{ secrets.DOCKER_USERNAME }}/klasifikasi-mahasiswa-api:latest
